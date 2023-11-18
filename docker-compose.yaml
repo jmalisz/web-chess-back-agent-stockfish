@@ -1,0 +1,6 @@
+version: "3.8"
+services:
+  web-chess-back-agent-stockfish:
+    image: "jmalisz/web-chess-back-agent-stockfish"
+    ports:
+      - "3000:3000"
