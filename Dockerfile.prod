@@ -30,5 +30,6 @@ COPY --from=build /app/dist ./dist
 
 ENV NODE_ENV="production"
 ENV SERVICE_PATH="/api/agent/stockfish"
+ENV NATS_URL="nats:4442"
 
 CMD [ "pnpm", "start" ]

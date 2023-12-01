@@ -7,6 +7,8 @@ import helmet from "helmet";
 import { logger, createLogMiddleware } from "./middlewares/createLogMiddleware.js";
 import { RequestError } from "./models/RequestError.js";
 import { createErrorMiddleware } from "./middlewares/createErrorMiddleware.js";
+import { connectToNats } from "./events/connectToNats.js";
+import { registerServiceCalculateNextMove } from "./services/registerServiceCalculateNextMove.js";
 
 const app = express();
 
@@ -24,9 +26,15 @@ app.all("*", () => {
 app.use(createLogMiddleware());
 app.use(createErrorMiddleware());
 
+const eventHandlers = await connectToNats();
 const httpServer = app.listen(3000, () => {
   logger.info("Express server is running at port 3000");
 });
+// TODO: This could be moved to loaders
+registerServiceCalculateNextMove(
+  eventHandlers.listenAgentCalculateMove,
+  eventHandlers.emitAgentMoveCalculated,
+);
 
 /* eslint-disable unicorn/no-process-exit */
 const gracefulShutdown = () => {

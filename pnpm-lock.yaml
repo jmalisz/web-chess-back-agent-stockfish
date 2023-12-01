@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  chess.js:
+    specifier: 1.0.0-beta.6
+    version: 1.0.0-beta.6
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
@@ -17,6 +20,9 @@ dependencies:
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
+  nats:
+    specifier: ^2.18.0
+    version: 2.18.0
   pino:
     specifier: ^8.15.0
     version: 8.16.2
@@ -1318,6 +1324,10 @@ packages:
     dependencies:
       get-func-name: 2.0.2
     dev: true
+
+  /chess.js@1.0.0-beta.6:
+    resolution: {integrity: sha512-sqBfX1VL3csSyqVM5ogbKA+aRlZyWDh276ruWXphwI0lDUMs7iYjZs29BOi49f7mXeunJE7cdfnIZhihsyLnsA==}
+    dev: false
 
   /chokidar@3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
@@ -2919,6 +2929,13 @@ packages:
     hasBin: true
     dev: true
 
+  /nats@2.18.0:
+    resolution: {integrity: sha512-zZF004ejzf67Za0Tva+xphxoxBMNc5IMLqbZ7Ho0j9TMuisjpo+qCd1EktXRCLNxmrZ8O6Tbm1dBsZYNF6yR1A==}
+    engines: {node: '>= 14.0.0'}
+    dependencies:
+      nkeys.js: 1.0.5
+    dev: false
+
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
@@ -2926,6 +2943,13 @@ packages:
   /negotiator@0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
+    dev: false
+
+  /nkeys.js@1.0.5:
+    resolution: {integrity: sha512-u25YnRPHiGVsNzwyHnn+PT90sgAhnS8jUJ1nxmkHMFYCJ6+Ic0lv291w7uhRBpJVJ3PH2GWbYqA151lGCRrB5g==}
+    engines: {node: '>=10.0.0'}
+    dependencies:
+      tweetnacl: 1.0.3
     dev: false
 
   /normalize-package-data@2.5.0:
@@ -3917,6 +3941,10 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
+
+  /tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
+    dev: false
 
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
