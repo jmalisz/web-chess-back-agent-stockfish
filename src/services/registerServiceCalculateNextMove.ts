@@ -1,22 +1,25 @@
 import { Chess } from "chess.js";
-import { random } from "lodash-es";
 
-import { EventHandlers } from "@/events/connectToNats.js";
+import { NatsEventHandlers } from "@/events/connectToNats.js";
+import { ChessEngineEventHandlers } from "@/stockfish/initChessEngine.js";
 
-export const registerServiceCalculateNextMove = (
-  listenAgentCalculateMove: EventHandlers["listenAgentCalculateMove"],
-  emitAgentMoveCalculated: EventHandlers["emitAgentMoveCalculated"],
-) => {
+type RegisterServiceCalculateNextMoveProps = {
+  listenAgentCalculateMove: NatsEventHandlers["listenAgentCalculateMove"];
+  emitAgentMoveCalculated: NatsEventHandlers["emitAgentMoveCalculated"];
+  chessEngineCalculateMove: ChessEngineEventHandlers["chessEngineCalculateMove"];
+};
+
+export const registerServiceCalculateNextMove = ({
+  listenAgentCalculateMove,
+  emitAgentMoveCalculated,
+  chessEngineCalculateMove,
+}: RegisterServiceCalculateNextMoveProps) => {
   const chess = new Chess();
 
-  listenAgentCalculateMove(({ gameId, gamePositionPgn }) => {
+  listenAgentCalculateMove(async ({ gameId, gamePositionPgn }) => {
     chess.loadPgn(gamePositionPgn);
-    const potentialMoves = chess.moves();
-    const move = potentialMoves[random(potentialMoves.length - 1)];
-
-    if (!move) throw new Error("Illegal move by agent");
+    const move = await chessEngineCalculateMove(chess.fen());
     chess.move(move);
-
     emitAgentMoveCalculated({ gameId, gamePositionPgn: chess.pgn() });
   });
 };

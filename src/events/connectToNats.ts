@@ -33,4 +33,4 @@ export const connectToNats = async () => {
   }
 };
 
-export type EventHandlers = Awaited<ReturnType<typeof connectToNats>>;
+export type NatsEventHandlers = Awaited<ReturnType<typeof connectToNats>>;

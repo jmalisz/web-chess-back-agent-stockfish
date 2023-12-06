@@ -9,6 +9,7 @@ import { RequestError } from "./models/RequestError.js";
 import { createErrorMiddleware } from "./middlewares/createErrorMiddleware.js";
 import { connectToNats } from "./events/connectToNats.js";
 import { registerServiceCalculateNextMove } from "./services/registerServiceCalculateNextMove.js";
+import { initChessEngine } from "./stockfish/initChessEngine.js";
 
 const app = express();
 
@@ -26,21 +27,24 @@ app.all("*", () => {
 app.use(createLogMiddleware());
 app.use(createErrorMiddleware());
 
+const { chessEngineStop, chessEngineCalculateMove } = initChessEngine();
 const eventHandlers = await connectToNats();
 const httpServer = app.listen(3000, () => {
   logger.info("Express server is running at port 3000");
 });
 // TODO: This could be moved to loaders
-registerServiceCalculateNextMove(
-  eventHandlers.listenAgentCalculateMove,
-  eventHandlers.emitAgentMoveCalculated,
-);
+registerServiceCalculateNextMove({
+  listenAgentCalculateMove: eventHandlers.listenAgentCalculateMove,
+  emitAgentMoveCalculated: eventHandlers.emitAgentMoveCalculated,
+  chessEngineCalculateMove,
+});
 
 /* eslint-disable unicorn/no-process-exit */
 const gracefulShutdown = () => {
   httpServer.close(() => {
     process.exit(1);
   });
+  chessEngineStop();
 
   // If a graceful shutdown is not achieved after 1 second, shut down the process completely
   setTimeout(() => {
