@@ -68,6 +68,9 @@ export const decorateSubscribe = (
       });
 
       const subscription = natsClientSubscribe.apply(natsClient, [subject, opts]);
+      // Cleanup logging subscription when the main one is closed
+      void subscription.closed.then(() => loggingSubscription.drain());
+
       return subscription;
     } catch (error: unknown) {
       handleError(error);
