@@ -31,7 +31,7 @@ module.exports = {
     "import/no-default-export": "warn",
     "import/no-extraneous-dependencies": [
       "error",
-      { devDependencies: ["vite.config.ts", "tailwind.config.ts"] },
+      { devDependencies: ["**/*.spec.*", "vite.config.ts"] },
     ],
     "import/prefer-default-export": "off",
     "no-relative-import-paths/no-relative-import-paths": [

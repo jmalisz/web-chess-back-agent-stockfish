@@ -1,7 +1,8 @@
 import { fork } from "node:child_process";
 import path from "node:path";
 
-import { registerEmitterCalculateMove } from "./emitters/registerEmitterCalculateMove.js";
+import { registerEmitterMoveByEngineStrength } from "./emitters/registerEmitterMoveByEngineStrength.js";
+import { registerEmitterMoveByEvaluation } from "./emitters/registerEmitterMoveByEvaluation.js";
 import { registerListenerStartingOptions } from "./listeners/registerListenerStartingOptions.js";
 import { registerLogMiddleware } from "./middlewares/createLogMiddleware.js";
 
@@ -25,12 +26,16 @@ export const initChessEngine = () => {
   // Listeners
   registerListenerStartingOptions(chessEngine, stdin);
 
+  // There is a possibility of synchronization issues if chess engine would take a long time to respond
+  // In practice, chess engine responds much faster than what would be problematic
   // Emitters
-  const chessEngineCalculateMove = registerEmitterCalculateMove(stdin, stdout);
+  const moveByEngineStrength = registerEmitterMoveByEngineStrength(stdin, stdout);
+  const moveByEvaluation = registerEmitterMoveByEvaluation(stdin, stdout);
 
   return {
-    chessEngineStop: () => controller.abort(),
-    chessEngineCalculateMove,
+    stop: () => controller.abort(),
+    moveByEngineStrength,
+    moveByEvaluation,
   };
 };
 

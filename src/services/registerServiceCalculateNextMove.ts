@@ -3,23 +3,34 @@ import { Chess } from "chess.js";
 import { NatsEventHandlers } from "@/events/connectToNats.js";
 import { ChessEngineEventHandlers } from "@/stockfish/initChessEngine.js";
 
-type RegisterServiceCalculateNextMoveProps = {
-  listenAgentCalculateMove: NatsEventHandlers["listenAgentCalculateMove"];
-  emitAgentMoveCalculated: NatsEventHandlers["emitAgentMoveCalculated"];
-  chessEngineCalculateMove: ChessEngineEventHandlers["chessEngineCalculateMove"];
+type RegisterServiceCalculateMoveProps = {
+  listenCalculateMoveEngineStrength: NatsEventHandlers["listenCalculateMoveEngineStrength"];
+  listenCalculateMoveEvaluation: NatsEventHandlers["listenCalculateMoveEvaluation"];
+  emitMoveCalculated: NatsEventHandlers["emitMoveCalculated"];
+  moveByEngineStrength: ChessEngineEventHandlers["moveByEngineStrength"];
+  moveByEvaluation: ChessEngineEventHandlers["moveByEvaluation"];
 };
 
-export const registerServiceCalculateNextMove = ({
-  listenAgentCalculateMove,
-  emitAgentMoveCalculated,
-  chessEngineCalculateMove,
-}: RegisterServiceCalculateNextMoveProps) => {
+export const registerServiceCalculateMove = ({
+  listenCalculateMoveEngineStrength,
+  listenCalculateMoveEvaluation,
+  emitMoveCalculated,
+  moveByEngineStrength,
+  moveByEvaluation,
+}: RegisterServiceCalculateMoveProps) => {
   const chess = new Chess();
 
-  listenAgentCalculateMove(async ({ gameId, gamePositionPgn }) => {
+  listenCalculateMoveEngineStrength(async ({ gameId, gamePositionPgn }) => {
     chess.loadPgn(gamePositionPgn);
-    const move = await chessEngineCalculateMove(chess.fen());
+    const move = await moveByEngineStrength(chess.fen());
     chess.move(move);
-    emitAgentMoveCalculated({ gameId, gamePositionPgn: chess.pgn() });
+    emitMoveCalculated({ gameId, gamePositionPgn: chess.pgn() });
+  });
+
+  listenCalculateMoveEvaluation(async ({ gameId, gamePositionPgn }) => {
+    chess.loadPgn(gamePositionPgn);
+    const move = await moveByEvaluation(chess.fen());
+    chess.move(move);
+    emitMoveCalculated({ gameId, gamePositionPgn: chess.pgn() });
   });
 };

@@ -19,6 +19,7 @@
     "prepareScripts:hooks": "git config core.hooksPath .githooks",
     "prettify": "prettier src --check",
     "prettify:fix": "prettier src --write",
+    "test": "vitest",
     "start": "node dist/app.js",
     "typecheck": "tsc --noEmit"
   },
@@ -32,6 +33,7 @@
     "pino": "^8.15.0",
     "pino-http": "^8.5.0",
     "stockfish": "^16.0.0",
+    "vite-tsconfig-paths": "^4.3.2",
     "zod": "^3.21.4"
   },
   "devDependencies": {
