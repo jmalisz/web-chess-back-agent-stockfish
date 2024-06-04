@@ -1,6 +1,4 @@
-import { inverseLinearInterpolation } from "./inverseLinearInterpolation.js";
-
-export const chessEngineCheckAdvantage = (chessEngineOutput: unknown) => {
+export const chessEngineCheckScore = (chessEngineOutput: unknown) => {
   const stringifiedChessEngineOutput = String(chessEngineOutput);
 
   const matchedInfo = stringifiedChessEngineOutput.match(/info depth 1/);
@@ -18,9 +16,5 @@ export const chessEngineCheckAdvantage = (chessEngineOutput: unknown) => {
   }
 
   // Interpolate ELO based on perceived chance of victory (from min possible, to maxPossible)
-  const cpScore = Number(stringifiedCpScore);
-  // Cp score of 100 means 100% perceived chance of victory
-  const perceivedChanceOfVictory = inverseLinearInterpolation(-100, 100, cpScore);
-
-  return perceivedChanceOfVictory;
+  return Number(stringifiedCpScore);
 };

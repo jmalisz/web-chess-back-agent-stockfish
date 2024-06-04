@@ -1,7 +1,7 @@
 import { ChildProcess } from "node:child_process";
 import { Writable } from "node:stream";
 
-import { chessEngineLogger } from "@/stockfish/config/logger.js";
+import { chessEngineLogger } from "@/services/stockfish/config/logger.js";
 
 const decorateStdin = (stdin: Writable) => {
   // eslint-disable-next-line @typescript-eslint/unbound-method
