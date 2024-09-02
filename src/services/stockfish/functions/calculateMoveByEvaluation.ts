@@ -4,12 +4,12 @@ import { Chess } from "chess.js";
 
 import { logger } from "@/middlewares/createLogMiddleware.js";
 import { MAX_ELO } from "@/services/stockfish/config/constants.js";
+import { centipawnToWinProbability } from "@/services/stockfish/utils/centipawnToWinProbability.js";
 import { chessEngineCheckReadiness } from "@/services/stockfish/utils/chessEngineCheckReadiness.js";
 import { chessEngineCheckScore } from "@/services/stockfish/utils/chessEngineCheckScore.js";
 import { findClosestNumbersBy } from "@/services/stockfish/utils/findClosestNumbers.js";
 import { flushReadable } from "@/services/stockfish/utils/flushReadable.js";
 import { getRandomInt } from "@/services/stockfish/utils/getRandomInt.js";
-import { inverseLinearInterpolation } from "@/services/stockfish/utils/inverseLinearInterpolation.js";
 
 const PREFERRED_MOVES_AMOUNT = 3;
 
@@ -48,8 +48,7 @@ const scoreMoves = async ({ chessInterface, stdin, stdout }: ScoreMovesProps) =>
       const calculateMoveAdvantage = (chessEngineOutput: unknown) => {
         const score = chessEngineCheckScore(chessEngineOutput);
         if (score === undefined) return;
-        const perceivedChanceOfVictory = inverseLinearInterpolation(0, 100, score);
-
+        const perceivedChanceOfVictory = centipawnToWinProbability(score);
         flushReadable(stdout);
 
         stdout.removeListener("data", calculateMoveAdvantage);

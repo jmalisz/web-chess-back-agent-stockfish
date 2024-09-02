@@ -6,16 +6,12 @@ import { Chess } from "chess.js";
 import { chessEngineLogger } from "./config/logger.js";
 import { calculateMoveByEngineStrength } from "./functions/calculateMoveByEngineStrength.js";
 import { calculateMoveByEvaluation } from "./functions/calculateMoveByEvaluation.js";
+import { evaluatePosition } from "./functions/evaluatePosition.js";
 import { scoreMovesStrength } from "./functions/scoreMovesStrength.js";
 import { registerLogMiddleware } from "./middlewares/registerLogMiddleware.js";
 
-const CHESS_ENGINE_PATH = path.join(
-  process.cwd(),
-  "node_modules",
-  "stockfish",
-  "src",
-  "stockfish-nnue-16.js",
-);
+const CHESS_ENGINE_PATH = path.join("node_modules", "stockfish", "src", "stockfish-nnue-16.js");
+const NNUE_PATH = path.join("node_modules", "stockfish", "src", "nn-5af11540bbfe.nnue");
 
 const controller = new AbortController();
 const chessEngine = fork(CHESS_ENGINE_PATH, ["stockfish.js"], {
@@ -31,6 +27,9 @@ chessEngine.on("spawn", () => {
   stdin.write("uci\n");
   stdin.write("setoption name UCI_LimitStrength value true\n");
   stdin.write("setoption name Move Overhead value 300\n");
+  stdin.write(`setoption name EvalFile value ${NNUE_PATH}\n`);
+  stdin.write("setoption name Use NNUE value true\n");
+  stdin.write("setoption name Threads value 2\n");
 });
 const chessInterface = new Chess();
 
@@ -49,6 +48,7 @@ export const stockfishControllerFactory = () => ({
     calculateMoveByEvaluation({ chessInterface, positionFen, stdin, stdout }),
   scoreMovesStrength: (positionFen: string) =>
     scoreMovesStrength({ chessInterface, positionFen, stdin, stdout }),
+  evaluatePosition: (positionFen: string) => evaluatePosition({ positionFen, stdin, stdout }),
 });
 
 export type StockfishService = ReturnType<typeof stockfishControllerFactory>;

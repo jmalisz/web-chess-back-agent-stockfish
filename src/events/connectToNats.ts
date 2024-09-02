@@ -5,6 +5,7 @@ import { logger } from "@/middlewares/createLogMiddleware.js";
 
 import { calculateMoveEngineStrengthFactory } from "./callbacks/calculateMoveEngineStrength.js";
 import { calculateMoveEvaluationFactory } from "./callbacks/calculateMoveEvaluation.js";
+import { evaluatePositionFactory } from "./callbacks/evaluatePosition.js";
 import { scoreMovesStrengthFactory } from "./callbacks/scoreMovesStrength.js";
 import { decorateNatsCommunication } from "./middlewares/decorateNatsCommunication.js";
 
@@ -12,6 +13,10 @@ export type CallbackProps = {
   natsClient: NatsConnection;
   jsonCodec: Codec<unknown>;
   message: Msg;
+};
+export type EmitterFactoryProps = {
+  natsClient: NatsConnection;
+  jsonCodec: Codec<unknown>;
 };
 
 type RegisterEventListenerProps = {
@@ -41,7 +46,7 @@ export const connectToNats = async () => {
     const natsClient = await connect({ servers: NATS_URL, waitOnFirstConnect: true });
     decorateNatsCommunication(natsClient, jsonCodec);
 
-    await Promise.all([
+    void Promise.all([
       registerEventListener({
         natsClient,
         jsonCodec,
@@ -60,7 +65,13 @@ export const connectToNats = async () => {
         subject: "agent.scoreMovesStrength",
         callback: scoreMovesStrengthFactory(),
       }),
-    ]);
+      registerEventListener({
+        natsClient,
+        jsonCodec,
+        subject: "agent.evaluatePosition",
+        callback: evaluatePositionFactory(),
+      }),
+    ]).catch((error) => logger.error(error));
   } catch (error) {
     logger.error(error);
 
